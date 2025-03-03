@@ -35,6 +35,8 @@ kotlin {
             implementation(libs.kotlinx.serialization.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io)
+            implementation(libs.ktor.client)
+            implementation(libs.ktor.darwin)
         }
     }
 }
