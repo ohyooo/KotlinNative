@@ -1,6 +1,3 @@
-@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-
-
 plugins {
     alias(libs.plugins.kmm)
     alias(libs.plugins.ks)
@@ -13,6 +10,7 @@ kotlin {
     val hostOs = System.getProperty("os.name")
     val isArm64 = System.getProperty("os.arch") == "aarch64"
     val isMingwX64 = hostOs.startsWith("Windows")
+    val isDarwin = hostOs.startsWith("Mac")
     val nativeTarget = when {
         hostOs == "Mac OS X" && isArm64 -> macosArm64("native")
         hostOs == "Mac OS X" && !isArm64 -> macosX64("native")
@@ -36,7 +34,12 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io)
             implementation(libs.ktor.client)
-            implementation(libs.ktor.darwin)
+            if (isMingwX64) {
+                implementation(libs.ktor.winhttp)
+            }
+            if (isDarwin) {
+                implementation(libs.ktor.darwin)
+            }
         }
     }
 }
