@@ -1,13 +1,26 @@
 [versions]
+agp = "9.0.0"
 kotlin = "2.3.0"
 ktor = "3.4.0"
+material = "1.13.0"
+activity = "1.12.2"
+junit = "4.13.2"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
 
 [plugins]
+agp = { id = "com.android.application", version.ref = "agp" }
 kgp = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 [libraries]
+androidx-core-ktx = "androidx.core:core-ktx:1.17.0"
+androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
 # Kotlin
 kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.10.0"
 kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2"
@@ -16,4 +29,6 @@ kotlinx-io = "org.jetbrains.kotlinx:kotlinx-io-core:0.8.2"
 ktor-client = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-winhttp = { module = "io.ktor:ktor-client-winhttp", version.ref = "ktor" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
