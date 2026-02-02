@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io)
             implementation(libs.ktor.client)
+            implementation(libs.ktor.cio)
             if (isMingwX64) {
                 implementation(libs.ktor.winhttp)
             }
