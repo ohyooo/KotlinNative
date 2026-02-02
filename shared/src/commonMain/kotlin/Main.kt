@@ -19,3 +19,7 @@ fun getContent(): String = runBlocking {
     client.close()
     response.bodyAsText()
 }
+
+fun main() {
+    println(getStatus())
+}
