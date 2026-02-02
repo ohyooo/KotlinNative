@@ -18,7 +18,13 @@ android {
         }
     }
     namespace = "com.ohyooo.demo"
-    compileSdk = libs.versions.compile.sdk.get().toInt()
+
+    compileSdk {
+        version = release(libs.versions.compile.sdk.get().toInt()) {
+            minorApiLevel = libs.versions.compile.minor.get().toInt()
+        }
+    }
+
     defaultConfig {
         applicationId = "com.ohyooo.demo"
         minSdk = libs.versions.min.sdk.get().toInt()
