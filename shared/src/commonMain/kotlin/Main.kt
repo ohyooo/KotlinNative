@@ -4,17 +4,17 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.runBlocking
 
+val client = HttpClient()
+
 fun getStatus(): Int = runBlocking {
-    val client = HttpClient()
-    val response: HttpResponse = client.get("http://ktor.io/")
+    val response: HttpResponse = client.get("http://google.com/")
     response.status
     client.close()
     response.status.value
 }
 
 fun getContent(): String = runBlocking {
-    val client = HttpClient()
-    val response: HttpResponse = client.get("http://ktor.io/")
+    val response: HttpResponse = client.get("http://google.com/")
     response.status
     client.close()
     response.bodyAsText()

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.agp)
     alias(libs.plugins.ks)
     alias(libs.plugins.cc)
+    alias(libs.plugins.jc)
 }
 
 android {
@@ -51,4 +52,14 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    implementation(libs.compose.foundation)
+}
+
+tasks.named("preBuild") {
+    dependsOn(":shared:copyAndroidSharedLibs")
 }

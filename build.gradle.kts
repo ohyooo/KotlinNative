@@ -22,6 +22,8 @@ buildscript {
 
 plugins {
     alias(libs.plugins.agp) apply false
+    alias(libs.plugins.cc) apply false
+    alias(libs.plugins.jc) apply false
     alias(libs.plugins.ks) apply false
     alias(libs.plugins.kmm) apply false
     alias(libs.plugins.kgp) apply false
@@ -33,7 +35,7 @@ allprojects {
             jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.addAll(
                 listOf(
-                    "-Xbackend-threads=8", "-Xcontext-receivers", "-jvm-target=21"
+                    "-Xbackend-threads=4", "-Xcontext-receivers", "-jvm-target=21"
                 )
             )
         }
