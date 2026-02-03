@@ -4,20 +4,39 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.runBlocking
 
-val client = HttpClient()
 
 fun getStatus(): Int = runBlocking {
-    val response: HttpResponse = client.get("http://google.com/")
-    response.status
-    client.close()
-    response.status.value
+    val client = HttpClient {
+        followRedirects = false
+    }
+    try {
+        val response: HttpResponse = client.get("http://google.com/")
+        response.status.value
+    } catch (e: Throwable) {
+        println("aaaaaaaaaa =======1======== aaaaaaaaaa")
+        e.printStackTrace()
+        println("aaaaaaaaaa =======2======== aaaaaaaaaa")
+        0
+    } finally {
+        client.close()
+    }
 }
 
 fun getContent(): String = runBlocking {
-    val response: HttpResponse = client.get("http://google.com/")
-    response.status
-    client.close()
-    response.bodyAsText()
+    val client = HttpClient {
+        followRedirects = false
+    }
+    try {
+        val response: HttpResponse = client.get("http://google.com/")
+        response.bodyAsText()
+    } catch (e: Throwable) {
+        println("aaaaaaaaaa ---------1-------- aaaaaaaaaa")
+        e.printStackTrace()
+        println("aaaaaaaaaa ---------2-------- aaaaaaaaaa")
+        e.toString()
+    } finally {
+        client.close()
+    }
 }
 
 fun main() {
