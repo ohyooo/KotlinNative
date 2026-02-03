@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+
 plugins {
     alias(libs.plugins.kmm)
     alias(libs.plugins.ks)
@@ -37,6 +39,7 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "shared"
+                debuggable = buildType == NativeBuildType.DEBUG
             }
         }
     }

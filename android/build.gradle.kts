@@ -43,6 +43,12 @@ android {
             isShrinkResources = true
         }
     }
+    packaging {
+        jniLibs {
+            // Keep symbols for native crash debugging.
+            keepDebugSymbols += listOf("**/libshared.so")
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -71,33 +77,43 @@ dependencies {
     implementation(libs.compose.foundation)
 }
 
-tasks.named("preBuild") {
-    dependsOn("copySharedJniLibs")
+val sharedBuildDir = project(":shared").layout.buildDirectory
+val sharedOutputDir = layout.buildDirectory.dir("generated/jniLibs/shared")
+
+fun registerCopySharedJniLibs(taskName: String, buildTypeName: String) =
+    tasks.register(taskName, Copy::class) {
+        val sharedDir = if (buildTypeName == "debug") "debugShared" else "releaseShared"
+        val linkPrefix = if (buildTypeName == "debug") "linkDebugShared" else "linkReleaseShared"
+
+        dependsOn(
+            ":shared:${linkPrefix}AndroidArm64",
+            ":shared:${linkPrefix}AndroidX64",
+            ":shared:${linkPrefix}AndroidArm32",
+            ":shared:${linkPrefix}AndroidX86",
+        )
+
+        from(sharedBuildDir.dir("bin/androidArm64/$sharedDir/libshared.so")) {
+            into("arm64-v8a")
+        }
+        from(sharedBuildDir.dir("bin/androidX64/$sharedDir/libshared.so")) {
+            into("x86_64")
+        }
+        from(sharedBuildDir.dir("bin/androidArm32/$sharedDir/libshared.so")) {
+            into("armeabi-v7a")
+        }
+        from(sharedBuildDir.dir("bin/androidX86/$sharedDir/libshared.so")) {
+            into("x86")
+        }
+
+        into(sharedOutputDir)
+    }
+
+val copySharedJniLibsDebug = registerCopySharedJniLibs("copySharedJniLibsDebug", "debug")
+val copySharedJniLibsRelease = registerCopySharedJniLibs("copySharedJniLibsRelease", "release")
+
+tasks.matching { it.name == "mergeDebugJniLibFolders" }.configureEach {
+    dependsOn(copySharedJniLibsDebug)
 }
-
-val copySharedJniLibs by tasks.registering(Copy::class) {
-    val outputDir = layout.buildDirectory.dir("generated/jniLibs/shared")
-    val sharedBuildDir = project(":shared").layout.buildDirectory
-
-    dependsOn(
-        ":shared:linkReleaseSharedAndroidArm64",
-        ":shared:linkReleaseSharedAndroidX64",
-        ":shared:linkReleaseSharedAndroidArm32",
-        ":shared:linkReleaseSharedAndroidX86",
-    )
-
-    from(sharedBuildDir.dir("bin/androidArm64/releaseShared/libshared.so")) {
-        into("arm64-v8a")
-    }
-    from(sharedBuildDir.dir("bin/androidX64/releaseShared/libshared.so")) {
-        into("x86_64")
-    }
-    from(sharedBuildDir.dir("bin/androidArm32/releaseShared/libshared.so")) {
-        into("armeabi-v7a")
-    }
-    from(sharedBuildDir.dir("bin/androidX86/releaseShared/libshared.so")) {
-        into("x86")
-    }
-
-    into(outputDir)
+tasks.matching { it.name == "mergeReleaseJniLibFolders" }.configureEach {
+    dependsOn(copySharedJniLibsRelease)
 }
