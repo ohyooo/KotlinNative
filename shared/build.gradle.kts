@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.plugin.mpp.SharedLibrary
-
 plugins {
     alias(libs.plugins.kmm)
     alias(libs.plugins.ks)
@@ -12,6 +9,8 @@ version = "1.0.0"
 kotlin {
     androidNativeArm64("androidArm64")
     androidNativeX64("androidX64")
+    androidNativeArm32("androidArm32")
+    androidNativeX86("androidX86")
 
     val hostOs = System.getProperty("os.name")
     val isArm64 = System.getProperty("os.arch") == "aarch64"
@@ -58,7 +57,13 @@ kotlin {
         val androidArm64Main by getting {
             dependsOn(androidNativeMain)
         }
+        val androidArm32Main by getting {
+            dependsOn(androidNativeMain)
+        }
         val androidX64Main by getting {
+            dependsOn(androidNativeMain)
+        }
+        val androidX86Main by getting {
             dependsOn(androidNativeMain)
         }
         if (isMingwX64) {
@@ -83,26 +88,4 @@ kotlin {
     }
 }
 
-val androidAbiByTarget = mapOf(
-    "androidArm64" to "arm64-v8a",
-    "androidX64" to "x86_64"
-)
-
-tasks.register<Copy>("copyAndroidSharedLibs") {
-    val jniLibsDir = rootProject.layout.projectDirectory.dir("android/src/main/jniLibs")
-    val kotlinTargets = kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>()
-
-    kotlinTargets.toList().filter { it.name in androidAbiByTarget.keys }.forEach { target ->
-        val abiDir = androidAbiByTarget.getValue(target.name)
-        val sharedLib = target.binaries.withType<SharedLibrary>()
-            .single { it.buildType == NativeBuildType.RELEASE }
-
-        dependsOn("linkReleaseShared${target.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}")
-        from(sharedLib.outputFile) {
-            into(abiDir)
-        }
-    }
-
-    into(jniLibsDir)
-}
 

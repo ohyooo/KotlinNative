@@ -55,6 +55,11 @@ android {
         resValues = false
         shaders = false
     }
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDir(file("$buildDir/generated/jniLibs/shared"))
+        }
+    }
 }
 
 dependencies {
@@ -67,5 +72,32 @@ dependencies {
 }
 
 tasks.named("preBuild") {
-    dependsOn(":shared:copyAndroidSharedLibs")
+    dependsOn("copySharedJniLibs")
+}
+
+val copySharedJniLibs by tasks.registering(Copy::class) {
+    val outputDir = layout.buildDirectory.dir("generated/jniLibs/shared")
+    val sharedBuildDir = project(":shared").layout.buildDirectory
+
+    dependsOn(
+        ":shared:linkReleaseSharedAndroidArm64",
+        ":shared:linkReleaseSharedAndroidX64",
+        ":shared:linkReleaseSharedAndroidArm32",
+        ":shared:linkReleaseSharedAndroidX86",
+    )
+
+    from(sharedBuildDir.dir("bin/androidArm64/releaseShared/libshared.so")) {
+        into("arm64-v8a")
+    }
+    from(sharedBuildDir.dir("bin/androidX64/releaseShared/libshared.so")) {
+        into("x86_64")
+    }
+    from(sharedBuildDir.dir("bin/androidArm32/releaseShared/libshared.so")) {
+        into("armeabi-v7a")
+    }
+    from(sharedBuildDir.dir("bin/androidX86/releaseShared/libshared.so")) {
+        into("x86")
+    }
+
+    into(outputDir)
 }
