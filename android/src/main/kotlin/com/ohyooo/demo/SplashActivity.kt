@@ -15,6 +15,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SplashActivity : ComponentActivity() {
 
@@ -30,6 +33,7 @@ class SplashActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            var buttonText by rememberSaveable { mutableStateOf("Load") }
             var status by rememberSaveable { mutableStateOf("") }
             var content by rememberSaveable { mutableStateOf("") }
 
@@ -51,16 +55,22 @@ class SplashActivity : ComponentActivity() {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(text = "Content", fontSize = 14.sp, color = Color.Black)
                 Text(
-                    text = if (content.isBlank()) "-" else content,
+                    text = content.ifBlank { "-" },
                     fontSize = 16.sp,
                     color = Color.Black,
                 )
                 Spacer(modifier = Modifier.height(20.dp))
+
+                val scope = rememberCoroutineScope()
                 Button(onClick = {
-                    status = "${Shared.nativeGetStatus()}"
-                    content = Shared.nativeGetContent()
+                    buttonText = "Loading"
+                    scope.launch(Dispatchers.IO) {
+                        status = "${Shared.nativeGetStatus()}"
+                        content = Shared.nativeGetContent()
+                        buttonText = "Load"
+                    }
                 }) {
-                    Text(text = "Load")
+                    Text(text = buttonText)
                 }
             }
         }
