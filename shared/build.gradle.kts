@@ -1,4 +1,9 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.konan.target.Architecture.ARM32
+import org.jetbrains.kotlin.konan.target.Architecture.ARM64
+import org.jetbrains.kotlin.konan.target.Architecture.X64
+import org.jetbrains.kotlin.konan.target.Architecture.X86
+import org.jetbrains.kotlin.konan.target.Family.ANDROID
 
 plugins {
     alias(libs.plugins.kmm)
@@ -40,6 +45,10 @@ kotlin {
             sharedLib {
                 baseName = "shared"
                 debuggable = buildType == NativeBuildType.DEBUG
+                if (konanTarget.family == ANDROID && konanTarget.architecture in arrayOf(ARM32, ARM64, X86, X64)) {
+                    // 16 KB ELF alignment for Android 15+ devices (arm64-v8a, x86_64)
+                    linkerOpts("-Wl,-z,max-page-size=16384")
+                }
             }
         }
     }
