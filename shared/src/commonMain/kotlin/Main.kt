@@ -36,5 +36,5 @@ fun getContent(): String = runBlocking {
 }
 
 fun main() {
-    println(getStatus())
+    println("status: ${getStatus()}")
 }
