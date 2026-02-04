@@ -10,6 +10,7 @@ fun getStatus(): Int = runBlocking {
         followRedirects = false
     }
     try {
+        // TLS sessions are not supported on Native platform: https://youtrack.jetbrains.com/issue/KTOR-7262
         val response: HttpResponse = client.get("http://google.com/")
         response.status.value
     } catch (e: Throwable) {
@@ -25,6 +26,7 @@ fun getContent(): String = runBlocking {
         followRedirects = false
     }
     try {
+        // TLS sessions are not supported on Native platform: https://youtrack.jetbrains.com/issue/KTOR-7262
         val response: HttpResponse = client.get("http://google.com/")
         response.bodyAsText()
     } catch (e: Throwable) {
