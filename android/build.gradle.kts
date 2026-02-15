@@ -37,16 +37,16 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-        }
-    }
-    packaging {
-        jniLibs {
-            // Keep symbols for native crash debugging.
-            keepDebugSymbols += listOf("**/libshared.so")
+            ndk {
+                debugSymbolLevel = "NONE"
+            }
         }
     }
     compileOptions {

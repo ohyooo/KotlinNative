@@ -44,10 +44,26 @@ kotlin {
         binaries {
             sharedLib {
                 baseName = "shared"
-                debuggable = buildType == NativeBuildType.DEBUG
+
+                val isDebug = buildType == NativeBuildType.DEBUG
+
+                if (isDebug) {
+                    freeCompilerArgs += "-g"
+                }
+
+                if (!isDebug) {
+                    freeCompilerArgs += "-opt"
+                }
+
+                debuggable = isDebug
+                optimized = !isDebug
+
+                binaryOptions["smallBinary"] = (!isDebug).toString()
+                binaryOptions["lto"] = "full"
+
                 if (konanTarget.family == ANDROID && konanTarget.architecture in arrayOf(ARM32, ARM64, X86, X64)) {
-                    // 16 KB ELF alignment for Android 15+ devices (arm64-v8a, x86_64)
                     linkerOpts("-Wl,-z,max-page-size=16384")
+                    linkerOpts("-Wl,-z,common-page-size=16384")
                 }
             }
         }
@@ -58,9 +74,9 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kotlinx.io)
-                implementation(libs.ktor.client)
-                implementation(libs.ktor.cio)
+//                implementation(libs.kotlinx.io)
+//                implementation(libs.ktor.client)
+//                implementation(libs.ktor.cio)
             }
         }
         val androidNativeMain by creating {
