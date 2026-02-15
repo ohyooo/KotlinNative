@@ -59,7 +59,6 @@ kotlin {
                 optimized = !isDebug
 
                 binaryOptions["smallBinary"] = (!isDebug).toString()
-                binaryOptions["lto"] = "full"
 
                 if (konanTarget.family == ANDROID && konanTarget.architecture in arrayOf(ARM32, ARM64, X86, X64)) {
                     linkerOpts("-Wl,-z,max-page-size=16384")

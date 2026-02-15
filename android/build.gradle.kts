@@ -63,7 +63,7 @@ android {
     }
     sourceSets {
         getByName("main") {
-            jniLibs.srcDir(file("$buildDir/generated/jniLibs/shared"))
+            jniLibs.directories.add("$buildDir/generated/jniLibs/shared")
         }
     }
 }
