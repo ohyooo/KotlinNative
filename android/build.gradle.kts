@@ -34,6 +34,7 @@ android {
         proguardFile("proguard-rules.pro")
         signingConfig = signingConfigs.getByName("debug")
     }
+    ndkVersion = "29.0.14206865"
     buildTypes {
         debug {
             isMinifyEnabled = false

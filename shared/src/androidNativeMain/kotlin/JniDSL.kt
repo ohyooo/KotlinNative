@@ -11,7 +11,7 @@ import kotlinx.cinterop.cstr
 import kotlinx.cinterop.get
 import platform.android.JNINativeMethod
 
-class JniMethodsBuilder {
+internal class JniMethodsBuilder {
     internal val defs = mutableListOf<NativeMethodDef>()
 
     fun int(name: String, fnPtr: COpaquePointer) {
@@ -23,15 +23,15 @@ class JniMethodsBuilder {
     }
 }
 
-data class NativeMethodDef(
+internal data class NativeMethodDef(
     val name: String,
     val signature: String,
     val fnPtr: COpaquePointer
 )
 
-fun jni(block: JniMethodsBuilder.() -> Unit): List<NativeMethodDef> = JniMethodsBuilder().apply(block).defs
+internal fun jni(block: JniMethodsBuilder.() -> Unit): List<NativeMethodDef> = JniMethodsBuilder().apply(block).defs
 
-fun MemScope.buildJniNativeMethods(defs: List<NativeMethodDef>): CPointer<JNINativeMethod> {
+internal fun MemScope.buildJniNativeMethods(defs: List<NativeMethodDef>): CPointer<JNINativeMethod> {
     val arr = allocArray<JNINativeMethod>(defs.size)
     defs.forEachIndexed { i, d ->
         arr[i].name = d.name.cstr.getPointer(this)

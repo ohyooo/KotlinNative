@@ -5,7 +5,7 @@
 import kotlinx.coroutines.runBlocking
 
 
-fun getStatus(): Int = runBlocking {
+internal fun getStatus(): Int = runBlocking {
 //    val client = HttpClient {
 //        followRedirects = false
 //    }
@@ -22,7 +22,7 @@ fun getStatus(): Int = runBlocking {
     1
 }
 
-fun getContent(): String = runBlocking {
+internal fun getContent(): String = runBlocking {
 //    val client = HttpClient {
 //        followRedirects = false
 //    }
