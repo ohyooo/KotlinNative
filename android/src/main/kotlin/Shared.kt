@@ -1,5 +1,3 @@
-package com.ohyooo.demo
-
 
 object Shared {
     init {

@@ -1,5 +1,6 @@
 package com.ohyooo.demo
 
+import Shared
 import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
@@ -28,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SplashActivity : ComponentActivity() {
+class Main : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

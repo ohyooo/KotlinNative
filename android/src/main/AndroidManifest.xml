@@ -14,7 +14,7 @@
             android:shell="true"
             tools:targetApi="29" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Main"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
