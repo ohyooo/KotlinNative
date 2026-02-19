@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kmm)
-    id("com.android.kotlin.multiplatform.library")
+    alias(libs.plugins.alp)
     alias(libs.plugins.ks)
     alias(libs.plugins.cc)
     alias(libs.plugins.jc)
