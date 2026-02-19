@@ -13,11 +13,11 @@ import platform.android.jint
 import platform.android.jobject
 import platform.android.jstring
 
-internal fun nativeGetStatus(env: CPointer<JNIEnvVar>?, thiz: jobject?): jint = getStatus()
+internal fun nativeGetStatus(env: CPointer<JNIEnvVar>?, thiz: jobject?): jint = SharedBridge.nativeGetStatus()
 
 internal fun nativeGetContent(env: CPointer<JNIEnvVar>?, thiz: jobject?): jstring? {
     if (env == null) return null
-    val content = getContent()
+    val content = SharedBridge.nativeGetContent()
     return memScoped {
         env.pointed.pointed?.NewStringUTF?.invoke(env, content.cstr.getPointer(this))
     }

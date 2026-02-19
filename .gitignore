@@ -5,3 +5,8 @@ build
 local.properties
 .*
 */.*
+
+# Allow tracking GitHub workflow files.
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml

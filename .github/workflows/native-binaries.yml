@@ -1,0 +1,53 @@
+name: Build Native Binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  native-binary:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: native-linux
+          - os: macos-latest
+            artifact_name: native-macos
+          - os: windows-latest
+            artifact_name: native-windows
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build release native executable (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :nativeApp:linkReleaseExecutableNative
+
+      - name: Build release native executable (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\gradlew.bat :nativeApp:linkReleaseExecutableNative
+
+      - name: Upload native executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: nativeApp/build/bin/native/releaseExecutable/*
+          if-no-files-found: error
