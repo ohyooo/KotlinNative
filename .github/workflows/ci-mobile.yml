@@ -10,6 +10,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -27,16 +30,51 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build Android Debug APK
+        if: github.event_name != 'release'
         run: |
           chmod +x ./gradlew
           ./gradlew :android:assembleDebug
 
-      - name: Upload Android artifact
+      - name: Build Android Release APK
+        if: github.event_name == 'release'
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :android:assembleRelease
+
+      - name: Upload Android Debug artifact
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-apk
           path: android/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      - name: Upload Android Release artifact
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: android/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      - name: Prepare Android release asset
+        if: github.event_name == 'release'
+        run: |
+          set -euo pipefail
+          mkdir -p dist/mobile
+          SRC_APK="$(find android/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | head -n 1)"
+          if [ -z "$SRC_APK" ]; then
+            echo "No release apk found"
+            exit 1
+          fi
+          cp "$SRC_APK" dist/mobile/android-release.apk
+
+      - name: Upload Android release asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/mobile/android-release.apk
+          fail_on_unmatched_files: true
 
   ios:
     runs-on: macos-latest
@@ -60,7 +98,8 @@ jobs:
         working-directory: iosApp
         run: xcodegen generate
 
-      - name: Build iOS app
+      - name: Build iOS app (Debug)
+        if: github.event_name != 'release'
         working-directory: iosApp
         run: |
           xcodebuild \
@@ -75,9 +114,53 @@ jobs:
             ONLY_ACTIVE_ARCH=YES \
             build
 
-      - name: Upload iOS artifact
+      - name: Build iOS app (Release)
+        if: github.event_name == 'release'
+        working-directory: iosApp
+        run: |
+          xcodebuild \
+            -project iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=YES \
+            build
+
+      - name: Upload iOS Debug artifact
+        if: github.event_name != 'release'
         uses: actions/upload-artifact@v4
         with:
-          name: ios-simulator-app
+          name: ios-debug-simulator-app
           path: iosApp/build/DerivedData/Build/Products/Debug-iphonesimulator/iosApp.app
           if-no-files-found: error
+
+      - name: Upload iOS Release artifact
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-simulator-app
+          path: iosApp/build/DerivedData/Build/Products/Release-iphonesimulator/iosApp.app
+          if-no-files-found: error
+
+      - name: Package iOS release asset
+        if: github.event_name == 'release'
+        run: |
+          set -euo pipefail
+          APP_DIR="iosApp/build/DerivedData/Build/Products/Release-iphonesimulator/iosApp.app"
+          if [ ! -d "$APP_DIR" ]; then
+            echo "iOS app bundle not found: $APP_DIR"
+            exit 1
+          fi
+          mkdir -p dist/mobile
+          ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" dist/mobile/ios-release-simulator-app.zip
+
+      - name: Upload iOS release asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/mobile/ios-release-simulator-app.zip
+          fail_on_unmatched_files: true
