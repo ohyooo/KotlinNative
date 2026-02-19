@@ -2,6 +2,9 @@ name: CI Mobile Build
 
 on:
   workflow_dispatch:
+  release:
+    types:
+      - published
   pull_request:
   push:
     branches:

@@ -2,9 +2,17 @@ name: Build Native Binaries
 
 on:
   workflow_dispatch:
+  release:
+    types:
+      - published
   push:
     branches:
       - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   native-binary:
@@ -13,11 +21,85 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: native-linux
+            target: linuxX64
+            gradle_task: linkReleaseExecutableLinuxX64
+            artifact_name: native-linux-x64
+          - os: ubuntu-latest
+            target: linuxArm64
+            gradle_task: linkReleaseExecutableLinuxArm64
+            artifact_name: native-linux-arm64
+          - os: ubuntu-latest
+            target: androidNativeArm32
+            gradle_task: linkReleaseExecutableAndroidNativeArm32
+            artifact_name: native-android-arm32
+          - os: ubuntu-latest
+            target: androidNativeArm64
+            gradle_task: linkReleaseExecutableAndroidNativeArm64
+            artifact_name: native-android-arm64
+          - os: ubuntu-latest
+            target: androidNativeX86
+            gradle_task: linkReleaseExecutableAndroidNativeX86
+            artifact_name: native-android-x86
+          - os: ubuntu-latest
+            target: androidNativeX64
+            gradle_task: linkReleaseExecutableAndroidNativeX64
+            artifact_name: native-android-x64
           - os: macos-latest
-            artifact_name: native-macos
+            target: macosArm64
+            gradle_task: linkReleaseExecutableMacosArm64
+            artifact_name: native-macos-arm64
+          - os: macos-latest
+            target: macosX64
+            gradle_task: linkReleaseExecutableMacosX64
+            artifact_name: native-macos-x64
+          - os: macos-latest
+            target: iosArm64
+            gradle_task: linkReleaseExecutableIosArm64
+            artifact_name: native-ios-arm64
+          - os: macos-latest
+            target: iosSimulatorArm64
+            gradle_task: linkReleaseExecutableIosSimulatorArm64
+            artifact_name: native-ios-sim-arm64
+          - os: macos-latest
+            target: iosX64
+            gradle_task: linkReleaseExecutableIosX64
+            artifact_name: native-ios-x64
+          - os: macos-latest
+            target: tvosArm64
+            gradle_task: linkReleaseExecutableTvosArm64
+            artifact_name: native-tvos-arm64
+          - os: macos-latest
+            target: tvosSimulatorArm64
+            gradle_task: linkReleaseExecutableTvosSimulatorArm64
+            artifact_name: native-tvos-sim-arm64
+          - os: macos-latest
+            target: tvosX64
+            gradle_task: linkReleaseExecutableTvosX64
+            artifact_name: native-tvos-x64
+          - os: macos-latest
+            target: watchosArm32
+            gradle_task: linkReleaseExecutableWatchosArm32
+            artifact_name: native-watchos-arm32
+          - os: macos-latest
+            target: watchosArm64
+            gradle_task: linkReleaseExecutableWatchosArm64
+            artifact_name: native-watchos-arm64
+          - os: macos-latest
+            target: watchosDeviceArm64
+            gradle_task: linkReleaseExecutableWatchosDeviceArm64
+            artifact_name: native-watchos-device-arm64
+          - os: macos-latest
+            target: watchosSimulatorArm64
+            gradle_task: linkReleaseExecutableWatchosSimulatorArm64
+            artifact_name: native-watchos-sim-arm64
+          - os: macos-latest
+            target: watchosX64
+            gradle_task: linkReleaseExecutableWatchosX64
+            artifact_name: native-watchos-x64
           - os: windows-latest
-            artifact_name: native-windows
+            target: mingwX64
+            gradle_task: linkReleaseExecutableMingwX64
+            artifact_name: native-windows-x64
 
     runs-on: ${{ matrix.os }}
 
@@ -34,20 +116,39 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Setup Android SDK
+        if: startsWith(matrix.target, 'androidNative')
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        if: startsWith(matrix.target, 'androidNative')
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "ndk;27.0.12077973"
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.0.12077973" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/27.0.12077973" >> "$GITHUB_ENV"
+
       - name: Build release native executable (Linux/macOS)
         if: runner.os != 'Windows'
         run: |
           chmod +x ./gradlew
-          ./gradlew :nativeApp:linkReleaseExecutableNative
+          ./gradlew :nativeApp:${{ matrix.gradle_task }}
 
       - name: Build release native executable (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: .\gradlew.bat :nativeApp:linkReleaseExecutableNative
+        run: .\gradlew.bat :nativeApp:${{ matrix.gradle_task }}
 
       - name: Upload native executable artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: nativeApp/build/bin/native/releaseExecutable/*
+          path: nativeApp/build/bin/${{ matrix.target }}/releaseExecutable/*
           if-no-files-found: error
+
+      - name: Upload release assets
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: nativeApp/build/bin/${{ matrix.target }}/releaseExecutable/*
+          fail_on_unmatched_files: true

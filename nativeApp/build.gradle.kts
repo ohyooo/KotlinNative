@@ -6,22 +6,47 @@ group = "com.ohyooo"
 version = "1.0.0"
 
 kotlin {
-    val hostOs = System.getProperty("os.name")
-    val isArm64 = System.getProperty("os.arch") == "aarch64"
+    val nativeTargets = listOf(
+        androidNativeArm32(),
+        androidNativeArm64(),
+        androidNativeX86(),
+        androidNativeX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+        iosX64(),
+        macosArm64(),
+        macosX64(),
+        linuxArm64(),
+        linuxX64(),
+        mingwX64(),
+        tvosArm64(),
+        tvosSimulatorArm64(),
+        tvosX64(),
+        watchosArm32(),
+        watchosArm64(),
+        watchosDeviceArm64(),
+        watchosSimulatorArm64(),
+        watchosX64(),
+    )
 
-    val nativeTarget = when {
-        hostOs == "Mac OS X" && isArm64 -> macosArm64("native")
-        hostOs == "Mac OS X" && !isArm64 -> macosX64("native")
-        hostOs == "Linux" && isArm64 -> linuxArm64("native")
-        hostOs == "Linux" && !isArm64 -> linuxX64("native")
-        hostOs.startsWith("Windows") -> mingwX64("native")
-        else -> error("Host OS is not supported: $hostOs")
+    nativeTargets.forEach { target ->
+        target.binaries {
+            executable {
+                // Keep artifacts unique for release uploads across targets.
+                baseName = "native-demo-${target.name}"
+                entryPoint = "main"
+            }
+        }
     }
 
-    nativeTarget.binaries {
-        executable {
-            baseName = "native-demo"
-            entryPoint = "main"
+    sourceSets {
+        val commonMain by getting
+        val nativeMain = maybeCreate("nativeMain").apply {
+            kotlin.srcDir("src/nativeMain/kotlin")
+            dependsOn(commonMain)
+        }
+        nativeTargets.forEach { target ->
+            getByName("${target.name}Main").dependsOn(nativeMain)
         }
     }
 }
