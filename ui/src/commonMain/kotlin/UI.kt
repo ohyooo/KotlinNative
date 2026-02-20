@@ -25,7 +25,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun SharedApp() {
+fun SharedApp(
+    loader: SharedDataLoader,
+) {
     var buttonText by rememberSaveable { mutableStateOf("Load") }
     var status by rememberSaveable { mutableStateOf("") }
     var content by rememberSaveable { mutableStateOf("") }
@@ -62,10 +64,10 @@ fun SharedApp() {
                             content = ""
                         }
                         val loadedStatus = withContext(Dispatchers.Default) {
-                            SharedBridge.nativeGetStatus().toString()
+                            loader.loadStatus().toString()
                         }
                         val loadedContent = withContext(Dispatchers.Default) {
-                            SharedBridge.nativeGetContent()
+                            loader.loadContent()
                         }
                         status = loadedStatus
                         content = loadedContent
@@ -77,4 +79,10 @@ fun SharedApp() {
             }
         }
     }
+}
+
+interface SharedDataLoader {
+    fun loadStatus(): Int
+
+    fun loadContent(): String
 }

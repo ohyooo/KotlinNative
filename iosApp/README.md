@@ -1,6 +1,6 @@
 # iosApp
 
-This iOS app module links the Kotlin/Native framework from `shared` using the official `embedAndSignAppleFrameworkForXcode` flow.
+This iOS app module links the Kotlin/Native frameworks from `ui` and `shared` using the official `embedAndSignAppleFrameworkForXcode` flow.
 
 ## Prerequisites
 
@@ -20,9 +20,13 @@ Then open `iosApp.xcodeproj` in Xcode and run.
 
 A pre-build script in `project.yml` runs:
 
+`./gradlew :ui:embedAndSignAppleFrameworkForXcode`
+
 `./gradlew :shared:embedAndSignAppleFrameworkForXcode`
 
-Xcode then links `shared` from:
+Xcode then links `ui` and `shared` from:
+
+`ui/build/xcode-frameworks/<CONFIGURATION>/<SDK_NAME>`
 
 `shared/build/xcode-frameworks/<CONFIGURATION>/<SDK_NAME>`
 

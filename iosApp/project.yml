@@ -17,9 +17,12 @@ targets:
       base:
         FRAMEWORK_SEARCH_PATHS:
           - "$(inherited)"
+          - "$(SRCROOT)/../ui/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
           - "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
         OTHER_LDFLAGS:
           - "$(inherited)"
+          - "-framework"
+          - "ui"
           - "-framework"
           - "shared"
         LD_RUNPATH_SEARCH_PATHS:
@@ -38,4 +41,5 @@ targets:
             exit 0
           fi
           cd "$SRCROOT/.."
+          ./gradlew :ui:embedAndSignAppleFrameworkForXcode
           ./gradlew :shared:embedAndSignAppleFrameworkForXcode

@@ -11,16 +11,18 @@ This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into And
 
 ## Project Structure
 
-- `shared/`: Kotlin Multiplatform module that produces `libshared.so`.
+- `shared/`: Kotlin Multiplatform logic module (network/JNI/native core).
+- `ui/`: Android UI module (Compose screen only, no native networking logic).
 - `android/`: Android app module that packages and loads the native libraries.
 - `iosApp/`: iOS app module (SwiftUI + XcodeGen) that links `shared` via `embedAndSignAppleFrameworkForXcode`.
 
 ## How It Works (High Level)
 
 - The `shared` module builds Kotlin/Native shared libraries for Android targets.
+- The `ui` module hosts shared Compose UI and receives loaders from app layer.
 - The `android` module copies those `.so` outputs into `jniLibs`.
 - The Android app invokes native functions exposed by `libshared.so`.
-- The iOS app invokes Kotlin/Native API from `shared` framework output under `shared/build/xcode-frameworks`.
+- The iOS app links `ui` and `shared` frameworks under their `build/xcode-frameworks` outputs.
 
 ## Build
 

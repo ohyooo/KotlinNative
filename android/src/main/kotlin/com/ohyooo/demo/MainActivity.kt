@@ -1,6 +1,8 @@
 package com.ohyooo.demo
 
+import Shared
 import SharedApp
+import SharedDataLoader
 import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
@@ -13,7 +15,13 @@ class MainActivity : ComponentActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContent {
-            SharedApp()
+            SharedApp(
+                loader = object : SharedDataLoader {
+                    override fun loadStatus(): Int = Shared.nativeGetStatus()
+
+                    override fun loadContent(): String = Shared.nativeGetContent()
+                },
+            )
         }
     }
 }

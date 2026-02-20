@@ -8,4 +8,4 @@ pluginManagement {
 
 rootProject.name = "Native"
 
-include(":shared", "android")
+include(":shared", ":ui", "android")
