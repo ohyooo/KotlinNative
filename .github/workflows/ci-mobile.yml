@@ -30,6 +30,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          dependency-graph: generate-and-submit
 
       - name: Build shared native libraries (all targets)
         run: |
@@ -52,6 +54,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          dependency-graph: generate-and-submit
 
       - name: Build Android Debug APK
         if: github.event_name != 'release'
@@ -116,6 +120,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          dependency-graph: generate-and-submit
 
       - name: Install XcodeGen
         run: brew install xcodegen
