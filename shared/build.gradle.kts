@@ -186,6 +186,38 @@ kotlin {
     }
 }
 
+fun String.uppercaseFirst(): String =
+    replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+fun registerLinkAllSharedTask(taskName: String, taskPrefix: String, descriptionText: String) =
+    tasks.register(taskName) {
+        group = "verification"
+        description = descriptionText
+
+        kotlin.targets.withType<KotlinNativeTarget>().forEach { target ->
+            dependsOn("$taskPrefix${target.name.uppercaseFirst()}")
+        }
+    }
+
+val linkDebugSharedAllTargets = registerLinkAllSharedTask(
+    taskName = "linkDebugSharedAllTargets",
+    taskPrefix = "linkDebugShared",
+    descriptionText = "Links debug shared libraries for all configured Kotlin/Native targets.",
+)
+
+val linkReleaseSharedAllTargets = registerLinkAllSharedTask(
+    taskName = "linkReleaseSharedAllTargets",
+    taskPrefix = "linkReleaseShared",
+    descriptionText = "Links release shared libraries for all configured Kotlin/Native targets.",
+)
+
+tasks.register("ciBuildSharedAllTargets") {
+    group = "verification"
+    description = "Links debug and release shared libraries for all configured Kotlin/Native targets."
+    dependsOn(linkDebugSharedAllTargets)
+    dependsOn(linkReleaseSharedAllTargets)
+}
+
 // Backward-compatible aliases for old Android Native task names.
 tasks.register("linkDebugSharedAndroidArm64") {
     dependsOn("linkDebugSharedAndroidNativeArm64")
