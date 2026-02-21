@@ -81,23 +81,6 @@ jobs:
           path: android/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
-      - name: Prepare Android release asset
-        run: |
-          set -euo pipefail
-          mkdir -p dist/mobile
-          SRC_APK="$(find android/build/outputs/apk/release -maxdepth 1 -type f -name '*.apk' | head -n 1)"
-          if [ -z "$SRC_APK" ]; then
-            echo "No release apk found"
-            exit 1
-          fi
-          cp "$SRC_APK" dist/mobile/android-release.apk
-
-      - name: Upload Android release asset
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/mobile/android-release.apk
-          fail_on_unmatched_files: true
-
   ios:
     runs-on: macos-latest
     steps:
@@ -167,20 +150,3 @@ jobs:
           name: ios-release-simulator-app
           path: iosApp/build/DerivedData/Build/Products/Release-iphonesimulator/iosApp.app
           if-no-files-found: error
-
-      - name: Package iOS release asset
-        run: |
-          set -euo pipefail
-          APP_DIR="iosApp/build/DerivedData/Build/Products/Release-iphonesimulator/iosApp.app"
-          if [ ! -d "$APP_DIR" ]; then
-            echo "iOS app bundle not found: $APP_DIR"
-            exit 1
-          fi
-          mkdir -p dist/mobile
-          ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" dist/mobile/ios-release-simulator-app.zip
-
-      - name: Upload iOS release asset
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/mobile/ios-release-simulator-app.zip
-          fail_on_unmatched_files: true
