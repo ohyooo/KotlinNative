@@ -7,7 +7,7 @@ compile-minor = "1"
 agp = "9.0.1"
 kotlin = "2.3.10"
 ktor = "3.4.0"
-compose = "1.10.3"
+compose = "1.10.4"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -16,7 +16,7 @@ kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0-alpha02" }
+jc = { id = "org.jetbrains.compose", version = "1.11.0-alpha03" }
 
 
 [libraries]
