@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -29,7 +29,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           dependency-graph: generate-and-submit
 
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -53,7 +53,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           dependency-graph: generate-and-submit
 
@@ -68,14 +68,14 @@ jobs:
           ./gradlew :android:assembleRelease
 
       - name: Upload Android Debug artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-debug-apk
           path: android/build/outputs/apk/debug/*.apk
           if-no-files-found: error
 
       - name: Upload Android Release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-release-apk
           path: android/build/outputs/apk/release/*.apk
@@ -85,7 +85,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -96,7 +96,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
         with:
           dependency-graph: generate-and-submit
 
@@ -138,14 +138,14 @@ jobs:
             build
 
       - name: Upload iOS Debug artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-debug-simulator-app
           path: iosApp/build/DerivedData/Build/Products/Debug-iphonesimulator/iosApp.app
           if-no-files-found: error
 
       - name: Upload iOS Release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-release-simulator-app
           path: iosApp/build/DerivedData/Build/Products/Release-iphonesimulator/iosApp.app
