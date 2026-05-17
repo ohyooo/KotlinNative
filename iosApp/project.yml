@@ -15,16 +15,15 @@ targets:
     deploymentTarget: "15.0"
     settings:
       base:
+        "ARCHS[sdk=iphonesimulator*]": arm64
+        "EXCLUDED_ARCHS[sdk=iphonesimulator*]": x86_64
         FRAMEWORK_SEARCH_PATHS:
           - "$(inherited)"
           - "$(SRCROOT)/../ui/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
-          - "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
         OTHER_LDFLAGS:
           - "$(inherited)"
           - "-framework"
           - "ui"
-          - "-framework"
-          - "shared"
         LD_RUNPATH_SEARCH_PATHS:
           - "$(inherited)"
           - "@executable_path/Frameworks"
@@ -32,6 +31,8 @@ targets:
       - path: iosApp
     info:
       path: iosApp/Info.plist
+      properties:
+        CADisableMinimumFrameDurationOnPhone: true
     preBuildScripts:
       - name: Compile Kotlin
         basedOnDependencyAnalysis: false

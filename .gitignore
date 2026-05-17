@@ -5,6 +5,7 @@ build
 local.properties
 .*
 */.*
+*.xcodeproj
 
 # Allow tracking GitHub workflow files.
 !.github/

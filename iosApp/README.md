@@ -1,6 +1,6 @@
 # iosApp
 
-This iOS app module links the Kotlin/Native frameworks from `ui` and `shared` through a pre-build script that compiles the correct Apple target and copies the frameworks into Xcode search paths.
+This iOS app module links the Kotlin/Native framework from `ui` through a pre-build script that compiles the correct Apple target and copies the framework into Xcode search paths. The `ui` framework exports `shared`, so the app links a single Kotlin/Native runtime.
 
 ## Prerequisites
 
@@ -22,11 +22,9 @@ A pre-build script in `project.yml` runs:
 
 `iosApp/scripts/prepare_kotlin_frameworks.sh`
 
-Xcode then links `ui` and `shared` from:
+Xcode then links `ui` from:
 
 `ui/build/xcode-frameworks/<CONFIGURATION>/<SDK_NAME>`
-
-`shared/build/xcode-frameworks/<CONFIGURATION>/<SDK_NAME>`
 
 ## Android Studio Run
 

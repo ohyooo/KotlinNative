@@ -40,6 +40,7 @@ kotlin {
                 baseName = "ui"
                 isStatic = true
                 binaryOption("bundleId", "com.ohyooo.demo.ui")
+                export(project(":shared"))
                 uiXCFramework.add(this)
             }
         }
@@ -53,6 +54,7 @@ kotlin {
                 implementation(compose.material)
                 implementation(compose.ui)
                 implementation(libs.kotlinx.coroutines.core)
+                api(project(":shared"))
             }
         }
         val androidMain by getting {

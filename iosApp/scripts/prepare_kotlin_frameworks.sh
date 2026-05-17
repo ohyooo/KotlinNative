@@ -55,10 +55,9 @@ cd "$project_root"
 KOTLIN_FRAMEWORK_BUILD_TYPE="$kotlin_framework_build_type" ./gradlew \
   --no-configure-on-demand \
   --console=plain \
-  ":shared:link${task_build_type}Framework${task_target_suffix}" \
   ":ui:link${task_build_type}Framework${task_target_suffix}"
 
-for module in shared ui; do
+for module in ui; do
   source_dir="$project_root/$module/build/bin/$kotlin_target/$build_type_dir"
   destination_dir="$project_root/$module/build/xcode-frameworks/$configuration/$sdk_name"
 

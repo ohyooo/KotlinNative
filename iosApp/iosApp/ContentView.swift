@@ -1,6 +1,5 @@
 import SwiftUI
 import ui
-import shared
 
 private final class IOSSharedDataLoader: NSObject, SharedDataLoader {
     func loadStatus() -> Int32 {
