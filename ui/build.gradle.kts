@@ -12,7 +12,7 @@ group = "com.ohyooo"
 version = "1.0.0"
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.ohyooo.demo.ui"
         compileSdk = libs.versions.compile.sdk.get().toInt()
         minSdk = libs.versions.min.sdk.get().toInt()
@@ -24,10 +24,11 @@ kotlin {
             System.getenv("DEVELOPER_DIR")?.contains("Xcode.app") == true ||
                     File("/Applications/Xcode.app").exists()
             )
-    val iosTargets: List<KotlinNativeTarget> = if (hasXcode) {
+    val appleTargets: List<KotlinNativeTarget> = if (hasXcode) {
         listOf(
             iosArm64(),
             iosSimulatorArm64(),
+            macosArm64(),
         )
     } else {
         emptyList()
@@ -35,7 +36,7 @@ kotlin {
 
     if (hasXcode) {
         val uiXCFramework = XCFramework("ui")
-        iosTargets.forEach { target ->
+        appleTargets.forEach { target ->
             target.binaries.framework {
                 baseName = "ui"
                 isStatic = true
@@ -49,10 +50,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.ui)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material)
+                implementation(libs.compose.ui)
                 implementation(libs.kotlinx.coroutines.core)
                 api(project(":shared"))
             }
@@ -64,8 +65,15 @@ kotlin {
             val iosMain = maybeCreate("iosMain").apply {
                 dependsOn(commonMain)
             }
-            iosTargets.forEach { target ->
-                getByName("${target.name}Main").dependsOn(iosMain)
+            val macosMain = maybeCreate("macosMain").apply {
+                dependsOn(commonMain)
+            }
+            appleTargets.forEach { target ->
+                val targetMain = getByName("${target.name}Main")
+                when {
+                    target.name.startsWith("ios") -> targetMain.dependsOn(iosMain)
+                    target.name.startsWith("macos") -> targetMain.dependsOn(macosMain)
+                }
             }
         }
     }

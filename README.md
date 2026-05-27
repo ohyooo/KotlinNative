@@ -1,12 +1,13 @@
 # KotlinNative Demo
 
-This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into Android native shared libraries (`.so`) and iOS frameworks that are consumed by app modules.
+This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into Android native shared libraries (`.so`) and Apple frameworks that are consumed by app modules.
 
 ## What This Demo Shows
 
 - Kotlin/Native shared library builds for Android ABIs.
 - Packaging the native libraries into the Android app.
-- Building and linking iOS framework artifacts from `shared`.
+- Building and linking iOS framework artifacts from `ui` and `shared`.
+- Building macOS arm64 Kotlin/Native binaries.
 - A simple Compose UI that calls into native code.
 
 ## Project Structure
@@ -14,7 +15,7 @@ This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into And
 - `shared/`: Kotlin Multiplatform logic module (network/JNI/native core).
 - `ui/`: Shared Compose UI module with MVI state management.
 - `android/`: Android app module that packages and loads the native libraries.
-- `iosApp/`: iOS app module (SwiftUI + XcodeGen) that links `shared` via `embedAndSignAppleFrameworkForXcode`.
+- `iosApp/`: iOS app module (SwiftUI + XcodeGen) that links the `ui` framework built by `iosApp/scripts/prepare_kotlin_frameworks.sh`.
 
 ## How It Works (High Level)
 
@@ -23,6 +24,7 @@ This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into And
 - The `android` module copies those `.so` outputs into `jniLibs`.
 - The Android app invokes native functions exposed by `libshared.so`.
 - The iOS app links `ui` and `shared` frameworks under their `build/xcode-frameworks` outputs.
+- The macOS target currently builds arm64 binaries only. A macOS app module is not included yet.
 
 ## MVI Architecture Flow
 
@@ -57,7 +59,14 @@ flowchart TD
 Android
 
 ```sh
+./gradlew :android:assembleDebug
 ./gradlew :android:assembleRelease
+```
+
+Run the Android app from Android Studio by selecting the `android` run configuration, or install a built APK with:
+
+```sh
+adb install android/build/outputs/apk/debug/android-debug.apk
 ```
 
 Windows
@@ -73,6 +82,29 @@ cd iosApp
 xcodegen
 open iosApp.xcodeproj
 ```
+
+Then run the `iosApp` scheme from Xcode. The pre-build script compiles the required `ui` framework and copies it into Xcode's framework search path.
+
+macOS arm64 binaries
+
+```sh
+./gradlew \
+  :shared:linkDebugSharedMacosArm64 \
+  :shared:linkReleaseSharedMacosArm64 \
+  :ui:linkDebugFrameworkMacosArm64 \
+  :ui:linkReleaseFrameworkMacosArm64
+```
+
+Outputs:
+
+- `shared/build/bin/macosArm64/debugShared/libshared.dylib`
+- `shared/build/bin/macosArm64/releaseShared/libshared.dylib`
+- `ui/build/bin/macosArm64/debugFramework/ui.framework`
+- `ui/build/bin/macosArm64/releaseFramework/ui.framework`
+
+There is currently no macOS app target to run directly. To run this on macOS, add an AppKit or SwiftUI macOS app and link `ui.framework`; the `ui` framework exports `shared`.
+
+CI uses the same macOS arm64 Gradle tasks in `.github/workflows/ci-mobile.yml`.
 
 ## Notes
 

@@ -155,3 +155,35 @@ jobs:
           name: ios-release-simulator-app
           path: iosApp/build/DerivedData/Build/Products/Release-iphonesimulator/iosApp.app
           if-no-files-found: error
+
+  macos-binaries:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+          java-package: jdk
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          dependency-graph: generate-and-submit
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build macOS arm64 binaries
+        run: |
+          chmod +x ./gradlew
+          ./gradlew \
+            :shared:linkDebugSharedMacosArm64 \
+            :shared:linkReleaseSharedMacosArm64 \
+            :ui:linkDebugFrameworkMacosArm64 \
+            :ui:linkReleaseFrameworkMacosArm64 \
+            --stacktrace
