@@ -12,7 +12,7 @@ This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into And
 ## Project Structure
 
 - `shared/`: Kotlin Multiplatform logic module (network/JNI/native core).
-- `ui/`: Android UI module (Compose screen only, no native networking logic).
+- `ui/`: Shared Compose UI module with MVI state management.
 - `android/`: Android app module that packages and loads the native libraries.
 - `iosApp/`: iOS app module (SwiftUI + XcodeGen) that links `shared` via `embedAndSignAppleFrameworkForXcode`.
 
@@ -23,6 +23,34 @@ This repository is a Kotlin/Native demo. It compiles Kotlin/Native code into And
 - The `android` module copies those `.so` outputs into `jniLibs`.
 - The Android app invokes native functions exposed by `libshared.so`.
 - The iOS app links `ui` and `shared` frameworks under their `build/xcode-frameworks` outputs.
+
+## MVI Architecture Flow
+
+```mermaid
+flowchart TD
+    AndroidApp[Android MainActivity] --> SharedApp[SharedApp]
+    IOSApp[iOS SwiftUI ContentView] --> SharedUIBridge[SharedUIBridge]
+    SharedUIBridge --> SharedApp
+
+    SharedApp --> Store[SharedStore]
+    Store --> State[SharedUiState]
+    State --> Screen[SharedScreen]
+    Screen --> Intent[SharedIntent]
+    Intent --> Store
+
+    Store --> Repository[SharedRepository]
+    Repository --> Loader[SharedDataLoader]
+    Loader --> NativeBridge[Shared / SharedBridge]
+    NativeBridge --> SharedModule[shared module native networking]
+
+    Repository --> Result[SharedLoadResult]
+    Result --> Action[SharedAction]
+    Action --> Reducer[SharedReducer]
+    Reducer --> State
+
+    Store --> Effect[SharedEffect]
+    Effect --> SharedApp
+```
 
 ## Build
 
