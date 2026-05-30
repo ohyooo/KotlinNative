@@ -3,11 +3,12 @@ min-sdk = "23"
 target-sdk = "37"
 compile-sdk = "37"
 compile-minor = "0"
+ndk = "29.0.14206865"
 
 agp = "9.2.1"
 kotlin = "2.3.21"
 ktor = "3.5.0"
-compose = "1.11.2"
+compose = "1.12.0-alpha01"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -16,7 +17,7 @@ kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0" }
+jc = { id = "org.jetbrains.compose", version.ref = "compose" }
 
 
 [libraries]
@@ -28,10 +29,10 @@ kotlinx-io = "org.jetbrains.kotlinx:kotlinx-io-core:0.9.0"
 androidx-core-ktx = "androidx.core:core-ktx:1.18.0"
 androidx-activity-compose = "androidx.activity:activity-compose:1.13.0"
 
-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose" }
 
 ktor-client = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }

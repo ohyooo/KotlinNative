@@ -17,7 +17,7 @@ group = "com.ohyooo"
 version = "1.0.0"
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.ohyooo.demo.shared"
         compileSdk = libs.versions.compile.sdk.get().toInt()
         minSdk = libs.versions.min.sdk.get().toInt()
@@ -47,15 +47,12 @@ kotlin {
             iosArm64(),
             iosSimulatorArm64(),
             macosArm64(),
-            macosX64(),
             tvosArm64(),
             tvosSimulatorArm64(),
-            tvosX64(),
             watchosArm32(),
             watchosArm64(),
             watchosDeviceArm64(),
             watchosSimulatorArm64(),
-            watchosX64(),
         )
     } else {
         emptyList()
