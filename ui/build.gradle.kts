@@ -33,7 +33,7 @@ kotlin {
     } else {
         emptyList()
     }
-
+    jvm("desktop")
     if (hasXcode) {
         val uiXCFramework = XCFramework("ui")
         appleTargets.forEach { target ->
@@ -60,6 +60,19 @@ kotlin {
         }
         val androidMain by getting {
             dependsOn(commonMain)
+        }
+        val desktopMain by getting {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.kotlinx.coroutines.core)
+                api(project(":shared"))
+            }
         }
         if (hasXcode) {
             val iosMain = maybeCreate("iosMain").apply {

@@ -42,6 +42,7 @@ kotlin {
     val windowsTargets = listOf(
         mingwX64(),
     )
+    jvm("desktop")
     val appleTargets: List<KotlinNativeTarget> = if (hasXcode) {
         listOf(
             iosArm64(),
@@ -135,6 +136,9 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.winhttp)
             }
+        }
+        val desktopMain by getting {
+            dependsOn(commonMain)
         }
         val linuxMain = maybeCreate("linuxMain").apply {
             dependsOn(posixMain)
