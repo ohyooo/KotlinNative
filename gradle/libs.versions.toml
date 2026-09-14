@@ -8,7 +8,7 @@ ndk = "29.0.14206865"
 agp = "9.4.0"
 kotlin = "2.4.20"
 ktor = "3.5.2"
-compose = "1.12.0-alpha02"
+compose = "1.13.0-alpha01"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
