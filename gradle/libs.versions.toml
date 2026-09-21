@@ -5,9 +5,9 @@ compile-sdk = "37"
 compile-minor = "0"
 ndk = "29.0.14206865"
 
-agp = "9.4.0"
+agp = "9.4.1"
 kotlin = "2.4.20"
-ktor = "3.5.2"
+ktor = "3.6.0"
 compose = "1.13.0-alpha01"
 
 [plugins]
