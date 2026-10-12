@@ -6,9 +6,9 @@ compile-minor = "0"
 ndk = "29.0.14206865"
 
 agp = "9.4.1"
-kotlin = "2.4.20"
+kotlin = "2.4.21"
 ktor = "3.6.0"
-compose = "1.13.0-alpha01"
+compose = "1.13.0-alpha02"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
