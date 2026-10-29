@@ -5,7 +5,7 @@ compile-sdk = "37"
 compile-minor = "0"
 ndk = "29.0.14206865"
 
-agp = "9.4.1"
+agp = "9.5.0"
 kotlin = "2.4.21"
 ktor = "3.6.0"
 compose = "1.13.0-beta01"
