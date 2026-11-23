@@ -5,10 +5,10 @@ compile-sdk = "37"
 compile-minor = "2"
 ndk = "30.0.16248370"
 
-agp = "9.5.1"
+agp = "9.5.2"
 kotlin = "2.4.21"
 ktor = "3.6.1"
-compose = "1.13.0-beta02"
+compose = "1.13.0-rc01"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
